@@ -1,0 +1,23 @@
+[package]
+name = "Travel Tooltips"
+description = "MWSE-Lua based mod that adds graphical elements to travel menus."
+authors = ["tewlwolow"]
+version = "2.0.0"
+homepage = "https://www.nexusmods.com/morrowind/mods/48306"
+repository = "https://github.com/tewlwolow/Travel-Tooltips"
+
+
+[tools.mwse]
+lua-mod = "tew.Travel Tooltips"
+wait-until-initialize = false
+
+[dependencies]
+assets = [
+	"Textures\\tew\\Travel Tooltips",
+]
+
+[dependencies.mwse]
+buildnumber = 3212
+
+[dependencies.mge-xe]
+version = ">=0.15.0"
