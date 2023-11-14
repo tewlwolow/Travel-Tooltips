@@ -1,6 +1,6 @@
 local config = require("tew\\Travel Tooltips\\config")
-local modversion = require("tew\\Travel Tooltips\\version")
-local version = modversion.version
+local metadata = toml.loadMetadata("Travel Tooltips")
+local version = metadata.package.version
 
 local function registerVariable(id)
     return mwse.mcm.createTableVariable {

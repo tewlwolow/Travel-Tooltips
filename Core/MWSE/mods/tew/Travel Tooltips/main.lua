@@ -8,15 +8,21 @@ local descriptionTable = data.descriptionTable
 local gondoliersTable = data.gondoliersTable
 local useFallback = config.useFallback
 local headers, vehkHeaders
+local metadata = toml.loadMetadata("Travel Tooltips")
 
-local modversion = require("tew\\Travel Tooltips\\version")
-local version = modversion.version
 local debugLogOn = config.debugLogOn
-local function debugLog(string)
+-- Centralised debug message printer --
+local function debugLog(message)
     if debugLogOn then
-        mwse.log("[Travel Tooltips " .. version .. "] " .. string.format("%s", string))
+        local info = debug.getinfo(2, "Sl")
+        local module = info.short_src:match("^.+\\(.+).lua$")
+        local prepend = ("[%s.%s.%s:%s]:"):format(metadata.package.name, metadata.package.version, module,
+            info.currentline)
+        local aligned = ("%-36s"):format(prepend)
+        mwse.log(aligned .. " -- " .. string.format("%s", message))
     end
 end
+
 
 local vehkDir = "Data Files\\Textures\\tew\\Travel Tooltips\\Vehk's Ink\\"
 
@@ -277,6 +283,16 @@ local function createTravelMap(e)
 end
 
 local function init()
+    local version, modName
+
+    local util = require("tew.Travel Tooltips.util")
+    if not (metadata) then
+        util.metadataMissing()
+    else
+        version = metadata.package.version
+        modName = metadata.package.name
+    end
+
     -- Prepare AI headers data from available images on disk --
     for folder in lfs.dir(vehkDir) do
         if folder == ".." or folder == "." then goto continue end
@@ -301,13 +317,14 @@ local function init()
 
     event.register("uiActivated", createTravelMap, { filter = "MenuDialog" })
     event.register("uiActivated", createTooltip, { filter = "MenuServiceTravel" })
-    mwse.log("[Travel Tooltips] Version " .. version .. " initialised.")
 
     -- Old version deleter --
     if lfs.dir("Data Files\\MWSE\\mods\\Travel Tooltips\\") == true then
         lfs.rmdir("Data Files\\MWSE\\mods\\Travel Tooltips\\", true)
         mwse.log("[Travel Tooltips " .. version .. "]: Old mod folder found and deleted.")
     end
+
+    mwse.log(string.format("[%s] %s %s %s", modName, "version", version, "initialised."))
 end
 
 
